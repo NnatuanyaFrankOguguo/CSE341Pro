@@ -1,5 +1,5 @@
 /**
- * Workout Controller
+ * Workout Controlle
  * Handles all business logic for Workout CRUD operations
  * Each function is wrapped with asyncHandler to catch errors automatically
  */
