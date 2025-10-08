@@ -1,5 +1,5 @@
 /**
- * Workout Model
+ * Workout Mode
  * Defines the schema and model for workout sessions
  * Includes exercise details, duration, and calories burned
  */
