@@ -1,5 +1,5 @@
 /**
- * User Model
+ * User Moder
  * Defines the schema and model for user profiles
  * Includes fitness goals, body metrics, and calculated fields like BMI
  */
