@@ -31,6 +31,24 @@ const userSchema = new mongoose.Schema(
       ],
     },
 
+    // GitHub OAuth fields
+    githubId: {
+      type: String,
+      unique: true,
+      sparse: true // Allows null values to be non-unique
+    },
+
+    username: {
+      type: String,
+      trim: true,
+      maxlength: [50, 'Username cannot exceed 50 characters'],
+    },
+
+    avatarUrl: {
+      type: String,
+      trim: true,
+    },
+
     // Age in years
     age: {
       type: Number,

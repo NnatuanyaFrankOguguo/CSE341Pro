@@ -8,6 +8,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const swaggerUi = require('swagger-ui-express');
+const session = require('express-session');
+const passport = require('./config/passport');
 
 const logger = require('./utils/logger');
 const swaggerSpec = require('./config/swagger');
@@ -16,6 +18,8 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const workoutRoutes = require('./routes/workoutRoutes');
+const authRoutes = require('./routes/authRoutes');
+
 
 logger.info('Initializing Express application...');
 
@@ -73,6 +77,29 @@ app.use(express.json({ limit: '10mb' })); // Limit payload size
 
 // Parse URL-encoded request bodies (for form submissions)
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ========== SESSION & AUTHENTICATION MIDDLEWARE ==========
+
+// Session configuration for Passport (Production-ready for Render)
+logger.info('Configuring session middleware...');
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'fitness-tracker-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  name: 'fitness.sid', // Custom session name for security
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    httpOnly: true, // Prevent XSS attacks
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Required for cross-origin in production
+  },
+  proxy: process.env.NODE_ENV === 'production' // Trust proxy in production (required for Render)
+}));
+
+// Initialize Passport and session
+logger.info('Initializing Passport authentication...');
+app.use(passport.initialize());
+app.use(passport.session());
 
 // ========== REQUEST LOGGING MIDDLEWARE ==========
 
@@ -145,6 +172,12 @@ logger.success('User routes mounted at /api/v1/users');
 // Mount workout routes at /api/v1/workouts
 app.use('/api/v1/workouts', workoutRoutes);
 logger.success('Workout routes mounted at /api/v1/workouts');
+
+// Mount authentication routes at /auth
+app.use('/auth', authRoutes);
+logger.success('Auth routes mounted at /auth');
+
+
 
 // ========== ERROR HANDLING ==========
 

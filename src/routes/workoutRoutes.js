@@ -26,17 +26,21 @@ const {
   validateQueryParams,
 } = require('../middleware/validator');
 
+// Import authentication middleware
+const { requireAuth } = require('../middleware/auth');
+
 // Log when routes are being registered
 logger.info('Registering Workout routes...');
 
 /**
  * @route   POST /api/v1/workouts
  * @desc    Create a new workout
- * @access  Public
+ * @access  Protected (requires authentication)
  * @body    { userId, title, exerciseType, duration, caloriesBurned, intensity?, notes?, workoutDate?, exercises? }
  */
 router.post(
   '/',
+  requireAuth, // Protect this route - user must be authenticated
   validateWorkout(false), // false = not an update, all required fields must be present
   createWorkout
 );
@@ -92,12 +96,13 @@ router.get(
 /**
  * @route   PUT /api/v1/workouts/:id
  * @desc    Update a workout
- * @access  Public
+ * @access  Protected (requires authentication)
  * @param   id - Workout ID (MongoDB ObjectId)
  * @body    Any workout fields to update (all optional)
  */
 router.put(
   '/:id',
+  requireAuth, // Protect this route - user must be authenticated
   validateObjectId('id'),
   validateWorkout(true), // true = update mode, all fields are optional
   updateWorkout
@@ -106,11 +111,12 @@ router.put(
 /**
  * @route   DELETE /api/v1/workouts/:id
  * @desc    Delete a workout
- * @access  Public
+ * @access  Protected (requires authentication)
  * @param   id - Workout ID (MongoDB ObjectId)
  */
 router.delete(
   '/:id',
+  requireAuth, // Protect this route - user must be authenticated
   validateObjectId('id'),
   deleteWorkout
 );
