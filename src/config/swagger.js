@@ -43,7 +43,7 @@ const swaggerDefinition = {
       description: 'Development server',
     },
     {
-      url: 'https://your-app.onrender.com',
+      url: 'https://cse341pro.onrender.com',
       description: 'Production server (Update with your Render URL)',
     },
   ],
